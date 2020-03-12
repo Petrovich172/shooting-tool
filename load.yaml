@@ -1,0 +1,15 @@
+phantom:
+  enabled: false
+pandora:
+  package: yandextank.plugins.Pandora
+  enabled: true
+  pandora_cmd: ./main
+  config_file: ./pandora_config.yaml
+telegraf:
+  enabled: false
+overload:
+  enabled: true
+  package: yandextank.plugins.DataUploader
+  token_file: ./token.txt
+  job_name: HFT
+  job_dsc: testing

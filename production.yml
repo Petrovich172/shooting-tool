@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  skalper:
+    image: skalper:me
+    container_name: skalper_me
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/production/app/Dockerfile
+    links:
+      - rabbitmq
+      - redis
+    env_file:
+      - bitmex.env
+    environment:
+      - POJECT_NAME=Skalper Bot
+      - TEAM_NAME=Dream Team
+      - CELERY_BROKER_URL=amqp://skalper:skalper@rabbitmq:5672/skalper
+      - CELERY_RESULT_BACKEND=amqp://skalper:skalper@rabbitmq:5672/skalper
+      - USE_BROKER=1
+      - REDIS_URL=redis://redis:6379/skalper
+    volumes:
+      - /etc/timezone/local:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    command: /start.sh

@@ -1,0 +1,33 @@
+pools:
+  - id: HTTP pool
+    gun:
+      type: http
+      target: localhost:8085
+      # target: docker.for.mac.localhost:8085
+      dial:
+        timeout: 1s
+    ammo:
+      type: raw
+      file: ./ammo.txt
+      # file: /Users/peterk/go/src/gitlab.com/bitboardexchange.com/tools/ammo_generator/flow/ammo.txt
+    result:
+      type: phout
+      destination: ./http_phout.log
+    rps:
+      type: line
+      from: 1
+      to: 1
+      duration: 2s
+    startup:
+      type: once
+      times: 1
+log:
+  level: debug
+monitoring:
+  expvar:
+    enabled: true
+    port: 1234
+  cpuprofile:
+    enabled: false
+  memprofile:
+    enabled: false
