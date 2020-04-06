@@ -1,26 +1,30 @@
-pools:
-  - id: HTTP pool
-    gun:
-      type: http
-      target: localhost:8085
-      # target: docker.for.mac.localhost:8085
-      dial:
-        timeout: 1s
-    ammo:
-      type: raw
-      file: ./ammo.txt
-      # file: /Users/peterk/go/src/gitlab.com/bitboardexchange.com/tools/ammo_generator/flow/ammo.txt
-    result:
-      type: phout
-      destination: ./http_phout.log
-    rps:
-      type: line
-      from: 1
-      to: 1
-      duration: 2s
-    startup:
-      type: once
-      times: 1
+﻿pools:
+- id: HTTP pool
+  gun:
+    type: http
+    #      ssl: true
+    target: localhost:8085
+    #      target: docker.for.mac.localhost:8085
+    #      target: api.bitboardexchange.com:443
+    dial:
+      timeout: 1s
+  #        dns-cache: false
+  ammo:
+    type: raw
+#    file: ./ammo.txt
+    file: ../ammo_generator/flow/ammo.txt
+  result:
+    type: phout
+    destination: ./http_phout.log
+  rps:
+    duration: 15s
+    type: const
+    ops: 15
+  #      - {duration: 3s, type: const, ops: 5}
+  #      - {duration: 2s, type: line,  from: 5, to: 1}
+  startup:
+    type: once
+    times: 5
 log:
   level: debug
 monitoring:
