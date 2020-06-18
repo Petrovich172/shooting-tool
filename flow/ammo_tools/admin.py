@@ -12,7 +12,7 @@ def admin_create(domain, super_admin_token, email):
     if domain == "localhost":
         domain = domain_wrapper_local
 
-    url = "http://" + domain + "/admin/invite"
+    url = domain + "/admin/invite"
     payload = {
         "email": email,
         "role": "ADMIN",
@@ -35,7 +35,7 @@ def admin_create(domain, super_admin_token, email):
 
     # Claim invitte
     print("invite_token", invite_token)
-    claim_url = "http://" + domain + "/pub/stuff_claim_invite/" + invite_token
+    claim_url = domain + "/pub/stuff_claim_invite/" + invite_token
     claim_response = requests.request("PUT", claim_url, data="", headers="")
     jj = claim_response.json()
     print("invite claim_response", jj)
@@ -46,7 +46,7 @@ def admin_create(domain, super_admin_token, email):
         claim_access_token = jj.get("stuff", {}).get("access_token", "")
 
     # New password
-    new_pass_url = "http://" + domain + "/user/new_password"
+    new_pass_url = domain + "/user/new_password"
     payload = {
         "password": "123456",
         "totp_code": "111111"
@@ -66,7 +66,7 @@ def admin_login(domain, email):
     if domain == "localhost":
         domain = domain_wrapper_local
 
-    url = "http://" + domain + "/pub/stuff_login"
+    url = domain + "/pub/stuff_login"
 
     payload = {
         "password": "123456",
@@ -101,14 +101,15 @@ def init_dependencies(domain, admin_token):
     reg_crosses(domain, admin_token)
 
     for cross in crosses:
-        reg_contract_bulk(domain, admin_token, cross)
+        # reg_contract_bulk(domain, admin_token, cross)
+        reg_contract_bulk_futures_only(domain, admin_token, cross)
 
 
 def reg_currency(domain, token, symbol, name, description, is_fiat, rate):
     if domain == "localhost":
         domain = domain_wrapper_local
 
-    url = "http://" + domain + "/admin/currency"
+    url = domain + "/admin/currency"
     payload = {
         "symbol": symbol,
         "name": name,
@@ -136,7 +137,7 @@ def reg_currency(domain, token, symbol, name, description, is_fiat, rate):
 def reg_crosses(domain, token):
     if domain == "localhost":
         domain = domain_wrapper_local
-    url = "http://" + domain + "/admin/cross"
+    url = domain + "/admin/cross"
 
     payloads = [{
         "symbol": "BTCUSD",
@@ -293,7 +294,7 @@ def reg_contract_bulk(domain, token, cross):
     if domain == "localhost":
         domain = domain_mark_local
 
-    url = "http://" + domain + "/admin/bulk_contract"
+    url = domain + "/admin/bulk_contract"
 
     payload = {
         "cross_symbol": cross,
@@ -325,6 +326,33 @@ def reg_contract_bulk(domain, token, cross):
         },
         "perpetual": {
             "cross_symbol": cross,
+            "base_init_margin": "1.0",
+            "base_main_margin": "1.0",
+            "min_move": "1.0",
+            "is_autodeleverage": False
+        }
+    }
+
+    headers = {
+        'Content-Type': "application/json",
+        'Authorization': "Bearer: " + token,
+    }
+    payload = json.dumps(payload, sort_keys=True)
+    response = requests.request("PUT", url, data=payload, headers=headers)
+    print("reg_bulk_contracts for cross", cross, response.json())
+
+
+def reg_contract_bulk_futures_only(domain, token, cross):
+    if domain == "localhost":
+        domain = domain_mark_local
+
+    url = domain + "/admin/bulk_contract"
+
+    payload = {
+        "cross_symbol": cross,
+        "futures": {
+            "cross_symbol": cross,
+            "days_ahead": 130,
             "base_init_margin": "1.0",
             "base_main_margin": "1.0",
             "min_move": "1.0",

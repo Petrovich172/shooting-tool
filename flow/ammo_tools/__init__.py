@@ -1,12 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-domain_wrapper_local = "localhost:8081"
-domain_mark_local = "localhost:8083"
-domain_limit_local = "localhost:8085"
-domain_observer_local = "localhost:8090"
+domain_wrapper_local = "http://localhost:8081"
+domain_mark_local = "http://localhost:8083"
+domain_limit_local = "http://localhost:8085"
+domain_observer_local = "http://localhost:8090"
 
-currencies = ["BTC", "ETH", "LTC", "XRP", "USD"]
+# currencies = ["BTC", "ETH", "LTC", "XRP", "USD"]
+currencies = ["BTC", "USD"]
 currency_usd_rate = {
     "BTC": 139.196,
     "ETH": 6796,

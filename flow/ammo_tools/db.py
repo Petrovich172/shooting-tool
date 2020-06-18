@@ -1,8 +1,23 @@
 #!/usr/bin/python
 # -*- coding: latin-1 -*-
 
-import redis
 import psycopg2
+import redis
+from clickhouse_driver import Client
+
+
+def clean_clickhouse(domain, database):
+    client = Client(host=domain)
+    tables = client.execute("SELECT name FROM system.tables WHERE database = %(db)s",
+                            {"db": database}
+                            )
+    for table in tables:
+        table_name = table[0].encode("utf-8")
+        if table_name == "schema_migrations":
+            continue
+        else:
+            table_name = database + "." + table_name
+            client.execute("TRUNCATE TABLE {table_name}".format(table_name=table_name))
 
 
 def clean_redis(domain, prefixes):
@@ -26,9 +41,16 @@ def clean_redis(domain, prefixes):
 def clean_postgres_limit(domain):
     conn = psycopg2.connect(dbname="limit", user="limit", password="limit", host=domain)
     cursor = conn.cursor()
-    cursor.execute("truncate public.order, public.account, public.portfolio, public.account_action, public.wtransfer cascade;")
+    cursor.execute(
+        "truncate public.order, public.account, public.portfolio, public.account_action, public.wtransfer cascade;")
     conn.commit()
     conn.close()
+
+
+def clean_accounts_for_client(domain, client_id):
+    client = Client(host=domain)
+    client.execute(
+        "ALTER TABLE limit.account DELETE WHERE user_id = toUInt64(%(client_id)s)", {"client_id": client_id})
 
 
 def clean_postgres_mark(domain):
