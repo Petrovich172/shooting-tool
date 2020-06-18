@@ -12,12 +12,12 @@ def recharge_clients(domain):
         client_token = client["token"]
         client_id = client["client_id"]
         for account in client["accounts"]:
-            account_id = account["account_id"]
+            account_guid = account["account_guid"]
             currency = account["account_currency"]
-            deposit_commit(domain, client_token, client_id, account_id, currency, currency_usd_rate[currency])
+            deposit_commit(domain, client_token, client_id, account_guid, currency, currency_usd_rate[currency])
 
 
 if __name__ == "__main__":
     domain = "localhost"
-    # domain = "api.bitboardexchange.com"
+    # domain = "https://api.bitboardexchange.com/v1"
     recharge_clients(domain)

@@ -19,7 +19,7 @@ COPY ./start.sh /start.sh
 COPY ./load.yaml /load.yaml
 COPY ./pandora_config.yaml /pandora_config.yaml
 COPY ./token.txt /token.txt
-COPY ./flow/ammo.txt /ammo.txt
+COPY ./flow/ /flow
 WORKDIR /.
 
 RUN apt-get update \
