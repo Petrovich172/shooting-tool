@@ -13,10 +13,20 @@
     * Writes all necessary info at flow/client_info.json
 
 * 1.3 flow/market_fill.py
-    * Sends 20 (10 buy & 10 sell) Limit orders for each contract with random prices (around mark price). Quantity in range 10 — 1000
+    * Sends post limit orders (custom amount)
+    * Price is randomized around mark price (see method `randomize_price`)
+    * Quantity is 500 (see method `prep_orders_wrap`)
 
 * 1.4 flow/client_recharge.py
     * Remakes deposit $1M (or equivalent) for each account
+
+* Sample of market preparation flow:
+    * Create admin, currencies, cross-pairs, contracts & indexes
+        * `python field_preparation.py`
+    * Create 100 clients with accounts & deposits
+        * `python client_preparation.py 100`
+    * Create 4 post limit orders (will create 2 buy & 2 sell orders)
+        * `python market_fill.py 4 BTCUSD-M0`
 
 ### 	2. Ammo preparation instrument:
 * flow/ammo_preparation.py
@@ -27,6 +37,10 @@
             * Orders better than market price
             * Orders worse than market price
         * Cancel 20% of existing limit orders
+
+* Sample of ammo preparation use:
+    * Create ammo.txt with 20 buy limit, 20 sell limit & 20 market (10 buy & 10 sell) orders in one shot
+        * `python ammo_preparation.py 20 20 20`
 
 ### 	3. Load testing:
 * 3.1 Set up all necessary config
@@ -49,7 +63,6 @@
     * yandex-tank -c load.yaml (starts load testing)
 
 * 3.5 You can update ammo.txt file and move it inside container
-    * flow/ammo_preparation.py
     * `docker ps`, search for custom_tank #CONTAINER ID
     * `docker cp flow/ammo.txt %your_container_id%:/`
     * Gun recharged!
