@@ -13,7 +13,7 @@ from multiprocessing.pool import ThreadPool
 
 def make_ammo(domain):
     clients_info = read_clients_info("client_info.json")
-    pool = ThreadPool(processes=len(clients_info))
+    pool = ThreadPool(processes=10)
     results = []
     if os.path.exists("ammo.txt"):
         os.remove("ammo.txt")

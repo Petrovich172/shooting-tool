@@ -47,7 +47,7 @@ def client_flow(domain, email):
     return client_info
 
 
-def market_fill_flow(domain, email, client_accounts, contract_symbols):
+def market_fill_flow(domain, email, client_accounts, contract_symbols, prep_orders_amount):
     # print("\n*******LOGIN CLIENT********\n")
     client_token, client_id = client_login(domain, email)
     if client_token is None:
@@ -68,7 +68,8 @@ def market_fill_flow(domain, email, client_accounts, contract_symbols):
         for contract_symbol in contract_symbols:
             mark_price = get_mark_price(domain, contract_symbol)
             print("Contract Symbol: ", contract_symbol, "Currency: ", currency)
-            registred_guids = prep_limit_orders_put(domain, client_token, account_guid, contract_symbol, mark_price, 2)
+            registred_guids = prep_limit_orders_put(domain, client_token, account_guid, contract_symbol,
+                                                    mark_price, prep_orders_amount)
 
             account = {
                 "account_guid": account_guid,

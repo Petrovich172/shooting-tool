@@ -9,16 +9,16 @@ from time import sleep
 from ammo_tools.client import read_clients_info, write_client_info, market_fill_flow
 
 
-def prepare_market(domain, contract_symbols):
+def prepare_market(domain, contract_symbols, prep_orders_amount):
     new_clients_info = {"full_info": []}
     clients_info = read_clients_info("client_info.json")
-    pool = ThreadPool(processes=len(clients_info))
+    pool = ThreadPool(processes=10)
     results = []
     for client in clients_info:
         client_email = client["client"]
         client_accounts = client["accounts"]
         sleep(0.1)
-        result = pool.apply_async(market_fill_flow, (domain, client_email, client_accounts, contract_symbols))
+        result = pool.apply_async(market_fill_flow, (domain, client_email, client_accounts, contract_symbols, prep_orders_amount))
         results.append(result)
 
     pool.close()
@@ -35,8 +35,9 @@ if __name__ == "__main__":
     # domain = "localhost"
     domain = "https://api.bitboardexchange.com/v1"
     if len(argv) < 2:
-        print ("Set up correct contract_symbols to fill market\nCommand example: 'market_fill.py BTCUSD-M0 BTCUSD-H0'")
+        print ("Set up correct contract_symbols to fill market\nCommand example: 'market_fill.py 5 BTCUSD-M0 BTCUSD-H0'")
         exit(1)
     # contract_symbols = ["BTCUSD-M0"]
-    contract_symbols = argv[1:]
-    prepare_market(domain, contract_symbols)
+    prep_orders_amount = argv[1]
+    contract_symbols = argv[2:]
+    prepare_market(domain, contract_symbols, prep_orders_amount)
