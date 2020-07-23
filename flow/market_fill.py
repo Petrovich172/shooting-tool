@@ -38,6 +38,6 @@ if __name__ == "__main__":
         print ("Set up correct contract_symbols to fill market\nCommand example: 'market_fill.py 5 BTCUSD-M0 BTCUSD-H0'")
         exit(1)
     # contract_symbols = ["BTCUSD-M0"]
-    prep_orders_amount = argv[1]
+    prep_orders_amount = int(argv[1])
     contract_symbols = argv[2:]
     prepare_market(domain, contract_symbols, prep_orders_amount)
